@@ -1,0 +1,283 @@
+:root {
+  --bg: #fafafa;
+  --surface: #ffffff;
+  --text: #1a1a2e;
+  --text-secondary: #6b7280;
+  --primary: #4f46e5;
+  --primary-hover: #4338ca;
+  --success: #059669;
+  --warning: #d97706;
+  --danger: #dc2626;
+  --border: #e5e7eb;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
+  --shadow-lg: 0 4px 12px rgba(0,0,0,0.1);
+  --max-width: 480px;
+  --transition: 0.15s ease;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100dvh;
+  display: flex;
+  justify-content: center;
+  padding: 16px;
+}
+
+#app {
+  width: 100%;
+  max-width: var(--max-width);
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100dvh - 32px);
+}
+
+/* Catalog */
+.catalog { padding-top: 48px; }
+.catalog h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.catalog p {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin-bottom: 32px;
+}
+.catalog-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+.catalog-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  cursor: pointer;
+  transition: box-shadow var(--transition), border-color var(--transition);
+}
+.catalog-card:hover {
+  border-color: var(--primary);
+  box-shadow: var(--shadow-lg);
+}
+.catalog-card h3 {
+  font-size: 1rem;
+  margin-bottom: 4px;
+}
+.catalog-card .meta {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+/* Setup */
+.setup {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 24px;
+}
+.setup h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  text-align: center;
+}
+.setup-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.setup-btn {
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition);
+  text-align: left;
+}
+.setup-btn:hover {
+  border-color: var(--primary);
+  background: #f0f0ff;
+}
+.setup-btn.selected {
+  border-color: var(--primary);
+  background: #eef2ff;
+}
+
+/* Question */
+.question-screen {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.progress-bar {
+  height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  margin-bottom: 8px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: var(--primary);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+.question-meta {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-bottom: 24px;
+  text-align: center;
+}
+.question-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 24px;
+}
+.question-text {
+  font-size: clamp(1.1rem, 4vw, 1.4rem);
+  font-weight: 500;
+  line-height: 1.4;
+  text-align: center;
+  padding: 0 8px;
+}
+.answer-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.answer-btn {
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 20px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all var(--transition);
+  text-align: center;
+  font-weight: 500;
+}
+.answer-btn:hover {
+  border-color: var(--primary);
+  background: #f0f0ff;
+}
+.answer-btn.selected {
+  border-color: var(--primary);
+  background: #eef2ff;
+  color: var(--primary);
+}
+.question-nav {
+  display: flex;
+  justify-content: space-between;
+  padding: 16px 0;
+}
+.nav-btn {
+  background: none;
+  border: none;
+  color: var(--primary);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+}
+.nav-btn:hover { background: #f0f0ff; }
+.nav-btn:disabled { color: var(--text-secondary); cursor: default; }
+.nav-btn:disabled:hover { background: none; }
+
+/* Results */
+.results { padding-top: 24px; }
+.results h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.results-meta {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-bottom: 20px;
+}
+.score-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.score-card .label { font-size: 0.9rem; font-weight: 500; }
+.score-card .value { font-size: 0.9rem; font-weight: 600; }
+.score-card.total {
+  border: 2px solid var(--text);
+  margin-top: 12px;
+  margin-bottom: 16px;
+}
+.band-normal { border-left: 4px solid var(--success); }
+.band-borderline { border-left: 4px solid var(--warning); }
+.band-abnormal { border-left: 4px solid var(--danger); }
+.band-tag {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-left: 8px;
+}
+.band-tag.normal { background: #d1fae5; color: #065f46; }
+.band-tag.borderline { background: #fef3c7; color: #92400e; }
+.band-tag.abnormal { background: #fee2e2; color: #991b1b; }
+
+.results-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 24px;
+}
+.btn-primary {
+  flex: 1;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius);
+  padding: 14px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--transition);
+}
+.btn-primary:hover { background: var(--primary-hover); }
+.btn-secondary {
+  flex: 1;
+  background: var(--surface);
+  color: var(--text);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+.btn-secondary:hover { border-color: var(--primary); }
+
+.copy-success {
+  text-align: center;
+  color: var(--success);
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-top: 8px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.copy-success.show { opacity: 1; }
