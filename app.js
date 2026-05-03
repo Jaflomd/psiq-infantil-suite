@@ -2,6 +2,8 @@ import { renderCatalog } from './components/catalog.js';
 import { renderSetup } from './components/setup.js';
 import { renderQuestions } from './components/question.js';
 import { renderResults } from './components/results.js';
+import { renderMCHATQuestions } from './components/mchat-questions.js';
+import { renderMCHATResults } from './components/mchat-results.js';
 
 let state = { screen: 'catalog', instrumentId: null, setup: null };
 
@@ -13,7 +15,13 @@ function navigate(screen, data = {}) {
 function render() {
   switch (state.screen) {
     case 'catalog':
-      renderCatalog((id) => navigate('setup', { instrumentId: id }));
+      renderCatalog((id) => {
+        if (id === 'mchat') {
+          navigate('mchat-questions', { instrumentId: id });
+        } else {
+          navigate('setup', { instrumentId: id });
+        }
+      });
       break;
     case 'setup':
       renderSetup(
@@ -34,6 +42,15 @@ function render() {
       renderResults(state.setup, state.responses, state.impactResponses, state.versionKey, () => {
         navigate('catalog');
       });
+      break;
+    case 'mchat-questions':
+      renderMCHATQuestions(
+        (responses) => navigate('mchat-results', { responses }),
+        () => navigate('catalog')
+      );
+      break;
+    case 'mchat-results':
+      renderMCHATResults(state.responses, () => navigate('catalog'));
       break;
   }
 }

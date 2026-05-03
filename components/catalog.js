@@ -1,6 +1,7 @@
 import { sdq } from '../instruments/sdq.js';
+import { mchat } from '../instruments/mchat.js';
 
-const instruments = [sdq];
+const instruments = [sdq, mchat];
 
 export function renderCatalog(onSelect) {
   const html = `
@@ -12,7 +13,7 @@ export function renderCatalog(onSelect) {
           <div class="catalog-card" data-id="${inst.id}">
             <h3>${inst.name}</h3>
             <div class="meta">${inst.description}</div>
-            <div class="meta-time">Tiempo: aproximadamente ${inst.estimatedMinutes} minutos</div>
+            <div class="meta-time">Tiempo: aproximadamente ${inst.estimatedMinutes} minutos${inst.ageRange ? ` · Edad: ${inst.ageRange}` : ''}</div>
           </div>
         `).join('')}
       </div>
