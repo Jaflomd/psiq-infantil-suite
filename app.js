@@ -16,12 +16,19 @@ function render() {
       renderCatalog((id) => navigate('setup', { instrumentId: id }));
       break;
     case 'setup':
-      renderSetup((setup) => navigate('questions', { setup }));
+      renderSetup(
+        (setup) => navigate('questions', { setup }),
+        () => navigate('catalog')
+      );
       break;
     case 'questions':
-      renderQuestions(state.setup, (responses, impactResponses, versionKey) => {
-        navigate('results', { responses, impactResponses, versionKey });
-      });
+      renderQuestions(
+        state.setup,
+        (responses, impactResponses, versionKey) => {
+          navigate('results', { responses, impactResponses, versionKey });
+        },
+        () => navigate('setup', { instrumentId: state.instrumentId })
+      );
       break;
     case 'results':
       renderResults(state.setup, state.responses, state.impactResponses, state.versionKey, () => {
@@ -31,5 +38,4 @@ function render() {
   }
 }
 
-// Start
 render();

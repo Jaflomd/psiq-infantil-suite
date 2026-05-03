@@ -1,35 +1,73 @@
 import { sdq, getItems, getInformant } from '../instruments/sdq.js';
 
-export function renderQuestions(setup, onComplete) {
-  // Determine version key
+const informantInstructions = {
+  parent: "Piense en el comportamiento de su hijo/a. Para cada frase, elija la respuesta que mejor describe cómo es su hijo/a.",
+  teacher: "Piense en el comportamiento de este alumno/a. Para cada frase, elija la respuesta que mejor lo/la describe.",
+  self: "Piensa en cómo eres tú. Para cada frase, elige la respuesta que mejor te describe.",
+};
+
+export function renderQuestions(setup, onComplete, onBack) {
   const informant = setup.informant;
   let ageKey = setup.age;
-  // Map age selection to item version
   if (informant === "self" && ageKey === "4-17") ageKey = "11-17";
-  if (informant === "self" && (ageKey === "11-17" || ageKey === "17+")) {
-    // keep as is
-  }
   const versionKey = `${informant}-${ageKey}`;
   const items = getItems(versionKey);
   const labels = sdq.responseLabels[informant];
   const timeframe = sdq.timeframes[setup.type];
+  const timeframeText = setup.type === "full"
+    ? "Responda pensando en los últimos 6 meses."
+    : "Responda pensando en el último mes.";
 
   const responses = {};
   let currentIndex = 0;
-  let phase = "items"; // "items" or "impact"
+  let phase = "items";
   let impactResponses = {};
   let impactIndex = 0;
+  let showedIntro = false;
 
-  // Determine if we show impact questions
   const showImpact = setup.type === "followup";
   const impactQs = showImpact ? (sdq.impactQuestions[informant] || sdq.impactQuestions.parent) : [];
 
   function render() {
-    if (phase === "items") {
+    if (!showedIntro) {
+      renderIntro();
+    } else if (phase === "items") {
       renderItem();
     } else {
       renderImpactQuestion();
     }
+  }
+
+  function renderIntro() {
+    const html = `
+      <div class="question-screen">
+        <button class="back-btn" id="back-btn">← Volver</button>
+        <div class="intro-card">
+          <h2>Antes de empezar</h2>
+          <div class="intro-instructions">
+            <p><strong>${informantInstructions[informant]}</strong></p>
+            <p>${timeframeText}</p>
+            <p>Son ${items.length} preguntas. Para cada una hay 3 opciones:</p>
+            <ul>
+              <li><strong>${labels[0]}</strong> — no describe a ${informant === 'self' ? 'ti' : 'su hijo/a'}</li>
+              <li><strong>${labels[1]}</strong> — lo describe un poco o a veces</li>
+              <li><strong>${labels[2]}</strong> — lo describe muy bien o siempre</li>
+            </ul>
+            <p>No hay respuestas buenas ni malas. Conteste lo que usted crea que es más cierto.</p>
+          </div>
+          <button class="btn-primary" id="start-btn">Empezar</button>
+        </div>
+      </div>
+    `;
+
+    const container = document.getElementById('app');
+    container.innerHTML = html;
+
+    document.getElementById('back-btn').addEventListener('click', () => onBack());
+    document.getElementById('start-btn').addEventListener('click', () => {
+      showedIntro = true;
+      render();
+    });
   }
 
   function renderItem() {
@@ -39,8 +77,9 @@ export function renderQuestions(setup, onComplete) {
 
     const html = `
       <div class="question-screen">
+        <button class="back-btn" id="back-btn">← Volver</button>
         <div class="progress-bar"><div class="progress-fill" style="width:${progress}%"></div></div>
-        <div class="question-meta">SDQ · ${currentIndex + 1}/${items.length} · ${timeframe}</div>
+        <div class="question-meta">Pregunta ${currentIndex + 1} de ${items.length}</div>
         <div class="question-content">
           <div class="question-text">${item.text}</div>
           <div class="answer-options">
@@ -50,7 +89,7 @@ export function renderQuestions(setup, onComplete) {
           </div>
         </div>
         <div class="question-nav">
-          <button class="nav-btn" ${currentIndex === 0 ? 'disabled' : ''} data-action="prev">← Anterior</button>
+          <div></div>
           <button class="nav-btn" ${selected === undefined ? 'disabled' : ''} data-action="next">Siguiente →</button>
         </div>
       </div>
@@ -59,11 +98,16 @@ export function renderQuestions(setup, onComplete) {
     const container = document.getElementById('app');
     container.innerHTML = html;
 
-    // Answer buttons
+    document.getElementById('back-btn').addEventListener('click', () => {
+      if (currentIndex > 0) { currentIndex--; render(); }
+      else { showedIntro = false; render(); }
+    });
+
     container.querySelectorAll('.answer-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         responses[item.n] = parseInt(btn.dataset.value);
-        // Auto-advance after brief delay
+        container.querySelectorAll('.answer-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
         setTimeout(() => {
           if (currentIndex < items.length - 1) {
             currentIndex++;
@@ -75,17 +119,10 @@ export function renderQuestions(setup, onComplete) {
           } else {
             onComplete(responses, null, versionKey);
           }
-        }, 180);
-        // Visual feedback immediately
-        container.querySelectorAll('.answer-btn').forEach(b => b.classList.remove('selected'));
-        btn.classList.add('selected');
+        }, 200);
       });
     });
 
-    // Nav buttons
-    container.querySelector('[data-action="prev"]')?.addEventListener('click', () => {
-      if (currentIndex > 0) { currentIndex--; render(); }
-    });
     container.querySelector('[data-action="next"]')?.addEventListener('click', () => {
       if (responses[item.n] !== undefined) {
         if (currentIndex < items.length - 1) {
@@ -105,9 +142,7 @@ export function renderQuestions(setup, onComplete) {
   function renderImpactQuestion() {
     const q = impactQs[impactIndex];
 
-    // Check condition
     if (q.condition === "imp1_gt0" && impactResponses.imp1 === 0) {
-      // Skip — no difficulties reported
       onComplete(responses, impactResponses, versionKey);
       return;
     }
@@ -120,8 +155,9 @@ export function renderQuestions(setup, onComplete) {
 
     const html = `
       <div class="question-screen">
+        <button class="back-btn" id="back-btn">← Volver</button>
         <div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div>
-        <div class="question-meta">SDQ Impacto · ${currentNum}/${totalQs}</div>
+        <div class="question-meta">Preguntas adicionales · ${currentNum} de ${totalQs}</div>
         <div class="question-content">
           <div class="question-text">${q.text}</div>
           <div class="answer-options">
@@ -131,7 +167,7 @@ export function renderQuestions(setup, onComplete) {
           </div>
         </div>
         <div class="question-nav">
-          <button class="nav-btn" ${impactIndex === 0 ? 'disabled' : ''} data-action="prev">← Anterior</button>
+          <div></div>
           <button class="nav-btn" ${selected === undefined ? 'disabled' : ''} data-action="next">Siguiente →</button>
         </div>
       </div>
@@ -140,19 +176,20 @@ export function renderQuestions(setup, onComplete) {
     const container = document.getElementById('app');
     container.innerHTML = html;
 
+    document.getElementById('back-btn').addEventListener('click', () => {
+      if (impactIndex > 0) { impactIndex--; render(); }
+      else { phase = "items"; currentIndex = items.length - 1; render(); }
+    });
+
     container.querySelectorAll('.answer-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         impactResponses[q.n] = parseInt(btn.dataset.value);
         container.querySelectorAll('.answer-btn').forEach(b => b.classList.remove('selected'));
         btn.classList.add('selected');
-        setTimeout(() => advanceImpact(), 180);
+        setTimeout(() => advanceImpact(), 200);
       });
     });
 
-    container.querySelector('[data-action="prev"]')?.addEventListener('click', () => {
-      if (impactIndex > 0) { impactIndex--; render(); }
-      else { phase = "items"; currentIndex = items.length - 1; render(); }
-    });
     container.querySelector('[data-action="next"]')?.addEventListener('click', () => {
       if (impactResponses[q.n] !== undefined) advanceImpact();
     });

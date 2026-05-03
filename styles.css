@@ -71,27 +71,67 @@ body {
   margin-bottom: 4px;
 }
 .catalog-card .meta {
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   color: var(--text-secondary);
+  line-height: 1.4;
+  margin-bottom: 8px;
 }
+.catalog-card .meta-time {
+  font-size: 0.8rem;
+  color: var(--primary);
+  font-weight: 500;
+}
+
+/* Back button */
+.back-btn {
+  background: none;
+  border: none;
+  color: var(--primary);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 8px 0;
+  margin-bottom: 8px;
+  text-align: left;
+}
+.back-btn:hover { opacity: 0.7; }
 
 /* Setup */
 .setup {
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  gap: 24px;
+  gap: 20px;
+  padding-top: 8px;
+}
+.setup-header {
+  text-align: center;
+}
+.setup-step {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 .setup h2 {
-  font-size: 1.25rem;
+  font-size: 1.3rem;
   font-weight: 600;
   text-align: center;
+  margin-bottom: 4px;
+}
+.setup-hint {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  text-align: center;
+  line-height: 1.4;
+  margin-top: 4px;
 }
 .setup-options {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  margin-top: 8px;
 }
 .setup-btn {
   background: var(--surface);
@@ -99,10 +139,20 @@ body {
   border-radius: var(--radius);
   padding: 16px 20px;
   font-size: 1rem;
-  font-weight: 500;
   cursor: pointer;
   transition: all var(--transition);
   text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.setup-btn-label {
+  font-weight: 600;
+}
+.setup-btn-desc {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  font-weight: 400;
 }
 .setup-btn:hover {
   border-color: var(--primary);
@@ -111,6 +161,39 @@ body {
 .setup-btn.selected {
   border-color: var(--primary);
   background: #eef2ff;
+}
+
+/* Intro card */
+.intro-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 24px;
+}
+.intro-card h2 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  text-align: center;
+}
+.intro-instructions {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  line-height: 1.6;
+}
+.intro-instructions p {
+  margin-bottom: 12px;
+  font-size: 0.95rem;
+}
+.intro-instructions p:last-child { margin-bottom: 0; }
+.intro-instructions ul {
+  margin: 8px 0 12px 20px;
+  font-size: 0.9rem;
+}
+.intro-instructions li {
+  margin-bottom: 6px;
 }
 
 /* Question */
